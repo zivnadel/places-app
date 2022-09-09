@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url(./animations.css);
+
+@layer components {
+  .nav-link {
+    @apply text-dark font-semibold drop-shadow-sm p-2.5 md:px-4 md:text-white hover:shadow-md transition-all rounded-xl hover:bg-primary hover:border-dark;
+  }
+
+  .nav-link-active {
+    @apply text-dark font-semibold drop-shadow-sm p-2.5 md:px-4 shadow-md rounded-xl md:text-white bg-primary border-dark;
+  }
+}

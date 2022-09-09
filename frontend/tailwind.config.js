@@ -12,6 +12,9 @@ module.exports = {
         dark: "#292929",
         light: "#f4f4f4",
       },
+      fontFamily: {
+        sans: ['Quicksand', 'sans-serif'],
+      },
       keyframes: {
         scale: {
           '0%': { transform: 'scale(1)' },
