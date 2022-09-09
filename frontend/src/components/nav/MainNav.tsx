@@ -32,7 +32,7 @@ const MainNav: React.FC = () => {
           className="text-white h-full w-72 flex justify-center items-center"
           to="/"
         >
-          <img src="logo.png" alt="Logo" />
+          <img src="logo-no-background.svg" alt="Logo" />
         </Link>
         <nav className="hidden md:block">
           <NavLinks />

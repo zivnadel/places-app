@@ -1,8 +1,8 @@
 import UsersList from "../components/users/UsersList";
-import UserModel from "../models/UserModel";
+import User from "../models/UserModel";
 
 const Users: React.FC = () => {
-  const USERS: UserModel[] = [
+  const USERS: User[] = [
     {
       id: "u1",
       name: "zivziv",

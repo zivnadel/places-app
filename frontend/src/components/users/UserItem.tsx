@@ -1,10 +1,10 @@
-import UserModel from "../../models/UserModel";
+import User from "../../models/UserModel";
 import Avatar from "../ui/Avatar";
 import { Link } from "react-router-dom";
 import Card from "../ui/Card";
 
 interface Props {
-  user: UserModel;
+  user: User;
 }
 
 const UserItem: React.FC<Props> = ({ user }) => {
