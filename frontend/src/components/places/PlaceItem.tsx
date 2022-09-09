@@ -3,6 +3,7 @@ import RoundedButton from "../ui/form-elements/RoundedButton";
 import React from "react";
 import Card from "../ui/Card";
 import Modal from "../ui/Modal";
+import Map from "../ui/Map";
 
 interface Props {
   place: Place;
@@ -27,7 +28,7 @@ const PlaceItem: React.FC<Props> = ({ place, id }) => {
         footer={<RoundedButton onClick={closeMapHandler}>Close</RoundedButton>}
       >
         <div className="h-80 w-full">
-          <h2>THE MAP!</h2>
+          <Map center={place.location} zoom={16} />
         </div>
       </Modal>
       <li className="my-4 mx-0">

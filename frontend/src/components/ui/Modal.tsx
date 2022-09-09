@@ -43,7 +43,7 @@ const ModalOverlay: React.FC<OverlayProps> = ({
         onSubmit={onSubmit ? onSubmit : (e) => e.preventDefault()}
       >
         <div className={twMerge(`py-4 px-2 ${contentClasses}`)}>{children}</div>
-        <footer className={twMerge(`py-4 px-2 ${footerClasses}`)}>
+        <footer className={twMerge(`py-2 px-2 ${footerClasses}`)}>
           {footer}
         </footer>
       </form>
