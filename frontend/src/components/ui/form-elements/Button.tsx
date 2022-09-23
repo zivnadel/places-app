@@ -12,9 +12,10 @@ interface Props {
   danger?: boolean;
   inverse?: boolean;
   animate?: boolean;
+  disabled?: boolean;
 }
 
-const RoundedButton: React.FC<Props> = ({
+const Button: React.FC<Props> = ({
   children,
   className,
   onClick,
@@ -24,6 +25,7 @@ const RoundedButton: React.FC<Props> = ({
   danger,
   inverse,
   animate,
+  disabled,
 }) => {
   if (href) {
     return (
@@ -75,8 +77,9 @@ const RoundedButton: React.FC<Props> = ({
     <button
       onClick={onClick}
       type={type}
+      disabled={disabled}
       className={twMerge(
-        `rounded-full py-2.5 px-4 text-white font-semibold ${
+        `rounded-full py-2.5 px-4 text-white font-semibold disabled:bg-gray-400 disabled:hover:bg-gray-500 ${
           animate && "hover:animate-scale"
         } ${
           danger
@@ -92,4 +95,4 @@ const RoundedButton: React.FC<Props> = ({
   );
 };
 
-export default RoundedButton;
+export default Button;

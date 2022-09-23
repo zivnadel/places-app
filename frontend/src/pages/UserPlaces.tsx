@@ -1,8 +1,7 @@
 import { useParams } from "react-router-dom";
 import PlacesList from "../components/places/PlacesList";
-import Place from "../models/PlaceModel";
 
-const DUMMY_PLACES: Place[] = [
+const DUMMY_PLACES = [
   {
     id: "p1",
     title: "Empire State Building",
