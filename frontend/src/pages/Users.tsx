@@ -1,8 +1,7 @@
 import UsersList from "../components/users/UsersList";
-import User from "../models/UserModel";
 
 const Users: React.FC = () => {
-  const USERS: User[] = [
+  const DUMMY_USERS = [
     {
       id: "u1",
       name: "zivziv",
@@ -12,7 +11,7 @@ const Users: React.FC = () => {
     },
   ];
 
-  return <UsersList items={USERS} />;
+  return <UsersList items={DUMMY_USERS} />;
 };
 
 export default Users;
