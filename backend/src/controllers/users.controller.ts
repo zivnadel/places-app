@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import HttpError from "../models/HttpErrorModel";
+import { validationResult } from "express-validator";
 import { v4 as uuidv4 } from "uuid";
+
+import HttpError from "../models/HttpErrorModel";
 
 const DUMMY_USERS: any = [
   {
@@ -21,6 +23,14 @@ export const getAllUsers = (
 };
 
 export const signup = (req: Request, res: Response, next: NextFunction) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError("Invalid input passed, please check your data.", 422)
+    );
+  }
+
   const { name, email, password } = req.body;
 
   const hasUser = DUMMY_USERS.find((u: any) => u.email === email);

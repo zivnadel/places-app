@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { validationResult } from "express-validator";
 import { v4 as uuidv4 } from "uuid";
 import HttpError from "../models/HttpErrorModel";
 import { Place } from "../models/PlaceModel";
@@ -56,6 +57,14 @@ export const createPlace = (
   res: Response,
   next: NextFunction
 ) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError("Invalid inputs passed, please check your data.", 422)
+    );
+  }
+
   const place: Place = req.body;
   const createdPlace = { id: uuidv4(), ...place };
   DUMMY_PLACES.push(createdPlace);
@@ -67,6 +76,14 @@ export const updatePlace = (
   res: Response,
   next: NextFunction
 ) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError("Invalid inputs passed, please check your data.", 422)
+    );
+  }
+
   const pid = req.params.pid;
   const { title, description } = req.body;
 
