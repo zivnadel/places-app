@@ -4,6 +4,7 @@ import React from "react";
 import Card from "../ui/Card";
 import Modal from "../ui/Modal";
 import Map from "../ui/Map";
+import AuthContext from "../../store/AuthContext";
 
 interface Props {
   place: Place;
@@ -13,6 +14,8 @@ interface Props {
 const PlaceItem: React.FC<Props> = ({ place, id }) => {
   const [showMap, setShowMap] = React.useState(false);
   const [showDeleteModal, setShowDeleteModal] = React.useState(false);
+
+  const authContext = React.useContext(AuthContext);
 
   const openMapHandler = () => setShowMap(true);
 
@@ -88,12 +91,21 @@ const PlaceItem: React.FC<Props> = ({ place, id }) => {
             <Button inverse animate onClick={openMapHandler} className="m-2">
               VIEW ON MAP
             </Button>
-            <Button animate to={`/places/${id}`} className="m-2">
-              EDIT
-            </Button>
-            <Button onClick={showDeleteHandler} animate danger className="m-2">
-              DELETE
-            </Button>
+            {authContext?.isLoggedIn && (
+              <>
+                <Button animate to={`/places/${id}`} className="m-2">
+                  EDIT
+                </Button>
+                <Button
+                  onClick={showDeleteHandler}
+                  animate
+                  danger
+                  className="m-2"
+                >
+                  DELETE
+                </Button>
+              </>
+            )}
           </div>
         </Card>
       </li>
