@@ -1,8 +1,9 @@
 import express, { NextFunction, Request, Response } from "express";
-import HttpError from "./models/HttpErrorModel";
+import mongoose from "mongoose";
 
-import placesRoutes from "./routes/places-routes";
-import usersRoutes from "./routes/users-routes";
+import HttpError from "./utils/HttpError";
+import placesRoutes from "./routes/places.routes";
+import usersRoutes from "./routes/users.routes";
 
 const app = express();
 
@@ -25,6 +26,13 @@ app.use((error: HttpError, req: Request, res: Response, next: NextFunction) => {
     .json({ message: error.message || "An unknown error occurred!" });
 });
 
-app.listen(5000, () => {
-  console.log("Server is up and running on port 5000");
-});
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => {
+    app.listen(5000, () => {
+      console.log("Server is up and running on port 5000");
+    });
+  })
+  .catch((error) => {
+    console.error(error);
+  });

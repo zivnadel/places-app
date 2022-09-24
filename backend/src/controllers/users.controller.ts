@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { v4 as uuidv4 } from "uuid";
 
-import HttpError from "../models/HttpErrorModel";
+import HttpError from "../utils/HttpError";
 
 const DUMMY_USERS: any = [
   {

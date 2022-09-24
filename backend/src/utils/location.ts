@@ -1,6 +1,6 @@
 import axios from "axios";
 import dotenv from "dotenv";
-import HttpError from "../models/HttpErrorModel";
+import HttpError from "./HttpError";
 
 dotenv.config();
 
