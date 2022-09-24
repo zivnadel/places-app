@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { validationResult } from "express-validator";
+import getCoordsByAddress from "../utils/location";
 import { v4 as uuidv4 } from "uuid";
 import HttpError from "../models/HttpErrorModel";
 import { Place } from "../models/PlaceModel";
@@ -52,7 +53,7 @@ export const getPlacesByCreatorId = (
   res.json({ places });
 };
 
-export const createPlace = (
+export const createPlace = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -65,8 +66,16 @@ export const createPlace = (
     );
   }
 
-  const place: Place = req.body;
-  const createdPlace = { id: uuidv4(), ...place };
+  const place: Omit<Place, "location"> = req.body;
+
+  let location;
+  try {
+    location = await getCoordsByAddress(place.address);
+  } catch (error) {
+    return next(error);
+  }
+
+  const createdPlace = { id: uuidv4(), ...place, location };
   DUMMY_PLACES.push(createdPlace);
   res.status(201).json({ createdPlace });
 };
