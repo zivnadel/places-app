@@ -1,10 +1,15 @@
 import React from "react";
-import Input from "../components/ui/form-elements/Input";
-import Button from "../components/ui/form-elements/Button";
+import Input from "../components/ui/formElements/Input";
+import Button from "../components/ui/formElements/Button";
 
 import { VALIDATOR_MINLENGTH, VALIDATOR_REQUIRE } from "../utils/validators";
-import FormWrapper from "../components/ui/form-elements/FormWrapper";
+import FormWrapper from "../components/ui/formElements/FormWrapper";
 import useForm from "../hooks/useForm";
+import useAxios from "../hooks/useAxios";
+import AuthContext from "../store/AuthContext";
+import ErrorModal from "../components/ui/ErrorModal";
+import LoadingSpinner from "../components/ui/LoadingSpinner";
+import { useNavigate } from "react-router-dom";
 
 const NewPlace: React.FC = () => {
   const initialFormState = {
@@ -27,42 +32,59 @@ const NewPlace: React.FC = () => {
 
   const { formState, inputHandler } = useForm(initialFormState);
 
+  const { isLoading, error, sendRequest, clearError } = useAxios();
+
+  const authContext = React.useContext(AuthContext);
+
+  const navigate = useNavigate();
+
   const placeSubmitHandler = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formState.inputs);
+    sendRequest(`${process.env.REACT_APP_BACKEND_URL}/api/places`, "POST", {
+      title: formState.inputs.title.value,
+      description: formState.inputs.description.value,
+      address: formState.inputs.address.value,
+      creator: authContext?.uid,
+    }).then(() => {
+      navigate("/");
+    });
   };
 
   return (
-    <FormWrapper onSubmit={placeSubmitHandler}>
-      <Input
-        element="input"
-        id="title"
-        type="text"
-        label="Title"
-        errorText="Please enter a valid title!"
-        validators={[VALIDATOR_REQUIRE()]}
-        onInput={inputHandler}
-      />
-      <Input
-        element="textarea"
-        id="description"
-        label="Description"
-        errorText="Please enter a valid description! (at least 5 characters)"
-        validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(5)]}
-        onInput={inputHandler}
-      />
-      <Input
-        element="input"
-        id="address"
-        label="Address"
-        errorText="Please enter a valid address!"
-        validators={[VALIDATOR_REQUIRE()]}
-        onInput={inputHandler}
-      />
-      <Button type="submit" disabled={!formState.isValid}>
-        ADD PLACE
-      </Button>
-    </FormWrapper>
+    <>
+      {error && <ErrorModal error={error} onClear={clearError} />}
+      {isLoading && <LoadingSpinner asOverlay />}
+      <FormWrapper onSubmit={placeSubmitHandler}>
+        <Input
+          element="input"
+          id="title"
+          type="text"
+          label="Title"
+          errorText="Please enter a valid title!"
+          validators={[VALIDATOR_REQUIRE()]}
+          onInput={inputHandler}
+        />
+        <Input
+          element="textarea"
+          id="description"
+          label="Description"
+          errorText="Please enter a valid description! (at least 5 characters)"
+          validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(5)]}
+          onInput={inputHandler}
+        />
+        <Input
+          element="input"
+          id="address"
+          label="Address"
+          errorText="Please enter a valid address!"
+          validators={[VALIDATOR_REQUIRE()]}
+          onInput={inputHandler}
+        />
+        <Button type="submit" disabled={!formState.isValid}>
+          ADD PLACE
+        </Button>
+      </FormWrapper>
+    </>
   );
 };
 

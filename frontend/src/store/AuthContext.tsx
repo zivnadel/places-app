@@ -2,7 +2,8 @@ import React from "react";
 
 export interface AuthContextModel {
   isLoggedIn: boolean;
-  login: () => void;
+  uid: string;
+  login: (uid: string) => void;
   logout: () => void;
 }
 

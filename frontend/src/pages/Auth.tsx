@@ -1,7 +1,8 @@
 import React from "react";
-import Button from "../components/ui/form-elements/Button";
-import FormWrapper from "../components/ui/form-elements/FormWrapper";
-import Input from "../components/ui/form-elements/Input";
+
+import Button from "../components/ui/formElements/Button";
+import FormWrapper from "../components/ui/formElements/FormWrapper";
+import Input from "../components/ui/formElements/Input";
 import Sapartor from "../components/ui/Sapartor";
 import useForm from "../hooks/useForm";
 import AuthContext from "../store/AuthContext";
@@ -10,9 +11,31 @@ import {
   VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
 } from "../utils/validators";
+import LoadingSpinner from "../components/ui/LoadingSpinner";
+import ErrorModal from "../components/ui/ErrorModal";
+import useAxios from "../hooks/useAxios";
+import User from "../models/UserModel";
+
+interface IFormState {
+  inputs: {
+    email: {
+      value: string;
+      isValid: boolean;
+    };
+    password: {
+      value: string;
+      isValid: boolean;
+    };
+    name?: {
+      value: string;
+      isValid: boolean;
+    };
+  };
+  isValid: boolean;
+}
 
 const Auth: React.FC = () => {
-  const initialFormState = {
+  const initialFormState: IFormState = {
     inputs: {
       email: {
         value: "",
@@ -26,15 +49,47 @@ const Auth: React.FC = () => {
     isValid: false,
   };
 
-  const { formState, inputHandler, setFormData } = useForm(initialFormState);
+  const { formState, inputHandler, setFormData } =
+    useForm<typeof initialFormState>(initialFormState);
   const [isLoginMode, setIsLoginMode] = React.useState(true);
+
+  const { isLoading, error, sendRequest, clearError } = useAxios();
 
   const authContext = React.useContext(AuthContext);
 
-  const authSubmitHandler = (e: React.FormEvent) => {
+  const authSubmitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formState.inputs);
-    authContext?.login();
+
+    try {
+      interface IResponse {
+        user: User;
+        message: string;
+      }
+
+      let response;
+
+      if (isLoginMode) {
+        response = await sendRequest<IResponse>(
+          `${process.env.REACT_APP_BACKEND_URL}/api/users/login`,
+          "POST",
+          {
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value,
+          }
+        );
+      } else {
+        response = await sendRequest<IResponse>(
+          `${process.env.REACT_APP_BACKEND_URL}/api/users/signup`,
+          "POST",
+          {
+            name: formState.inputs.name!.value,
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value,
+          }
+        );
+      }
+      authContext?.login(response.user.id);
+    } catch (error) {}
   };
 
   const switchModeHandler = () => {
@@ -65,7 +120,9 @@ const Auth: React.FC = () => {
 
   return (
     <>
+      {error && <ErrorModal error={error} onClear={clearError} />}
       <FormWrapper onSubmit={authSubmitHandler}>
+        {isLoading && <LoadingSpinner asOverlay />}
         <h2 className="font-bold text-center text-3xl drop-shadow-md m-1 mb-4">
           Login Required
         </h2>

@@ -49,7 +49,7 @@ const formReducer = (state: FormState, action: FormAction) => {
   }
 };
 
-const useForm = (initialFormState: FormState) => {
+const useForm = <T extends FormState>(initialFormState: T) => {
   const [formState, dispatch] = React.useReducer(formReducer, initialFormState);
 
   const inputHandler = React.useCallback(
@@ -70,7 +70,11 @@ const useForm = (initialFormState: FormState) => {
     []
   );
 
-  return { formState, inputHandler, setFormData };
+  return {
+    formState: formState as T,
+    inputHandler,
+    setFormData,
+  };
 };
 
 export default useForm;

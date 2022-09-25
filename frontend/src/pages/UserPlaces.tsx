@@ -1,42 +1,50 @@
+import React from "react";
 import { useParams } from "react-router-dom";
 import PlacesList from "../components/places/PlacesList";
-
-const DUMMY_PLACES = [
-  {
-    id: "p1",
-    title: "Empire State Building",
-    description: "One of the most famous sky scrapers in the world!",
-    imageUrl:
-      "https://images.unsplash.com/photo-1662720215950-ce15c16373d1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
-    address: "20 W 34th St, New York, NY 10001, United States",
-    location: {
-      lat: 40.7484405,
-      lng: -73.9878584,
-    },
-    creator: "u1",
-  },
-  {
-    id: "p2",
-    title: "Empire State Building",
-    description: "One of the most famous sky scrapers in the world!",
-    imageUrl:
-      "https://images.unsplash.com/photo-1662720215950-ce15c16373d1?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
-    address: "20 W 34th St, New York, NY 10001, United States",
-    location: {
-      lat: 40.7484405,
-      lng: -73.9878584,
-    },
-    creator: "u2",
-  },
-];
+import ErrorModal from "../components/ui/ErrorModal";
+import LoadingSpinner from "../components/ui/LoadingSpinner";
+import useAxios from "../hooks/useAxios";
+import Place from "../models/PlaceModel";
 
 const UserPlaces: React.FC = () => {
   const { uid } = useParams();
-  const loadedPlaces = DUMMY_PLACES.filter((place) => place.creator === uid);
 
-  console.log({ uid, loadedPlaces });
+  const { isLoading, error, sendRequest, clearError } = useAxios();
 
-  return <PlacesList items={loadedPlaces}></PlacesList>;
+  const [loadedPlaces, setLoadedPlaces] = React.useState<Place[] | null>(null);
+
+  React.useEffect(() => {
+    sendRequest<Place[]>(
+      `${process.env.REACT_APP_BACKEND_URL}/api/places/user/${uid}`
+    ).then((data) => {
+      setLoadedPlaces(data);
+    });
+  }, [sendRequest, uid]);
+
+  const placeDeletedHandler = (deletedPlaceId: string) => {
+    setLoadedPlaces((prevPlaces) => {
+      if (prevPlaces) {
+        return prevPlaces.filter((p) => p.id !== deletedPlaceId);
+      }
+      return null;
+    });
+  };
+
+  return (
+    <>
+      {error && <ErrorModal error={error} onClear={clearError} />}
+      {isLoading ? (
+        <LoadingSpinner asOverlay />
+      ) : (
+        loadedPlaces && (
+          <PlacesList
+            onDeletePlace={placeDeletedHandler}
+            items={loadedPlaces}
+          />
+        )
+      )}
+    </>
+  );
 };
 
 export default UserPlaces;

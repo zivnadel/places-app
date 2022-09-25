@@ -1,19 +1,25 @@
 import Place from "../../models/PlaceModel";
-import Button from "../ui/form-elements/Button";
+import Button from "../ui/formElements/Button";
 import React from "react";
 import Card from "../ui/Card";
 import Modal from "../ui/Modal";
 import Map from "../ui/Map";
 import AuthContext from "../../store/AuthContext";
+import useAxios from "../../hooks/useAxios";
+import ErrorModal from "../ui/ErrorModal";
+import LoadingSpinner from "../ui/LoadingSpinner";
 
 interface Props {
   place: Place;
-  id?: string;
+  onDelete: (deletedPlaceId: string) => void;
+  id: string;
 }
 
-const PlaceItem: React.FC<Props> = ({ place, id }) => {
+const PlaceItem: React.FC<Props> = ({ place, id, onDelete }) => {
   const [showMap, setShowMap] = React.useState(false);
   const [showDeleteModal, setShowDeleteModal] = React.useState(false);
+
+  const { isLoading, error, sendRequest, clearError } = useAxios();
 
   const authContext = React.useContext(AuthContext);
 
@@ -31,11 +37,18 @@ const PlaceItem: React.FC<Props> = ({ place, id }) => {
 
   const confirmDeleteHandler = () => {
     setShowDeleteModal(false);
-    console.log("Deleting...");
+    sendRequest(
+      `${process.env.REACT_APP_BACKEND_URL}/api/places/${id}`,
+      "DELETE"
+    ).then(() => {
+      onDelete(id);
+    });
   };
 
   return (
     <>
+      {error && <ErrorModal error={error} onClear={clearError} />}
+      {isLoading && <LoadingSpinner asOverlay />}
       <Modal
         show={showMap}
         onCancel={closeMapHandler}
@@ -91,7 +104,7 @@ const PlaceItem: React.FC<Props> = ({ place, id }) => {
             <Button inverse animate onClick={openMapHandler} className="m-2">
               VIEW ON MAP
             </Button>
-            {authContext?.isLoggedIn && (
+            {authContext?.uid === place.creator && (
               <>
                 <Button animate to={`/places/${id}`} className="m-2">
                   EDIT

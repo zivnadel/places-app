@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import AuthContext from "../../store/AuthContext";
-import Button from "../ui/form-elements/Button";
+import Button from "../ui/formElements/Button";
 
 const NavLinks: React.FC = () => {
   const authContext = React.useContext(AuthContext);
@@ -25,7 +25,7 @@ const NavLinks: React.FC = () => {
               className={({ isActive }) =>
                 isActive ? "nav-link-active" : "nav-link"
               }
-              to="/u1/places"
+              to={`/${authContext.uid}/places`}
             >
               MY PLACES
             </NavLink>

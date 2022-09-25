@@ -1,12 +1,13 @@
-import Button from "../ui/form-elements/Button";
+import Button from "../ui/formElements/Button";
 import Card from "../ui/Card";
 import PlaceItem from "./PlaceItem";
 
 interface Props {
   items: any;
+  onDeletePlace: (deletedPlaceId: string) => void;
 }
 
-const PlacesList: React.FC<Props> = ({ items }) => {
+const PlacesList: React.FC<Props> = ({ items, onDeletePlace }) => {
   if (items.length === 0) {
     return (
       <div className="flex items-center justify-center">
@@ -25,7 +26,12 @@ const PlacesList: React.FC<Props> = ({ items }) => {
   return (
     <ul className="list-none my-4 mx-auto p-0 w-[90%] max-w-[40rem]">
       {items.map((place: any) => (
-        <PlaceItem key={place.id} id={place.id} place={place}></PlaceItem>
+        <PlaceItem
+          onDelete={onDeletePlace}
+          key={place.id}
+          id={place.id}
+          place={place}
+        ></PlaceItem>
       ))}
     </ul>
   );

@@ -18,7 +18,7 @@ export const getAllUsers = async (
     );
   }
 
-  res.json({ users: users.map((user) => user.toObject({ getters: true })) });
+  res.json(users.map((user) => user.toObject({ getters: true })));
 };
 
 export const signup = async (
@@ -55,7 +55,7 @@ export const signup = async (
     name,
     email,
     image:
-      "https://images.unsplash.com/photo-1615996330003-8b8b0b0b5b0a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+      "https://images.unsplash.com/photo-1530878955558-a6c31b9c97db?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80",
     password,
     places: [],
   });
@@ -70,7 +70,7 @@ export const signup = async (
 
   res.status(201).json({
     message: "Successfully created a new user!",
-    createdUser: createdUser.toObject({ getters: true }),
+    user: createdUser.toObject({ getters: true }),
   });
 };
 
@@ -99,5 +99,8 @@ export const login = async (
     );
   }
 
-  res.json({ message: "Logged In!" });
+  res.json({
+    message: "Logged In!",
+    user: indenitifiedUser.toObject({ getters: true }),
+  });
 };

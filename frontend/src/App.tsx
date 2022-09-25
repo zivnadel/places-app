@@ -11,14 +11,18 @@ import AuthContext, { AuthContextModel } from "./store/AuthContext";
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [uid, setUid] = React.useState("");
 
   const authContext: AuthContextModel = {
     isLoggedIn,
-    login: React.useCallback(() => {
+    uid,
+    login: React.useCallback((uid: string) => {
       setIsLoggedIn(true);
+      setUid(uid);
     }, []),
     logout: React.useCallback(() => {
       setIsLoggedIn(false);
+      setUid("");
     }, []),
   };
 
@@ -30,7 +34,7 @@ const App: React.FC = () => {
         <Route path="/" element={<Users />} />
         <Route path="/:uid/places" element={<UserPlaces />} />
         <Route path="/places/new" element={<NewPlace />} />
-        <Route path="/places/:placeId" element={<UpdatePlace />} />
+        <Route path="/places/:pid" element={<UpdatePlace />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     );

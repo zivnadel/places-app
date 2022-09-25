@@ -30,7 +30,7 @@ export const getPlaceById = async (
     );
   }
 
-  res.json({ place: place.toObject({ getters: true }) });
+  res.json(place.toObject({ getters: true }));
 };
 
 export const getPlacesByCreatorId = async (
@@ -49,17 +49,15 @@ export const getPlacesByCreatorId = async (
     );
   }
 
-  if (!userWithPlaces || userWithPlaces.places.length === 0) {
+  if (!userWithPlaces) {
     return next(
       new HttpError("Could not find a places for the provided user id.", 404)
     );
   }
 
-  res.json({
-    places: userWithPlaces.places.map((place) =>
-      place.toObject({ getters: true })
-    ),
-  });
+  res.json(
+    userWithPlaces.places.map((place) => place.toObject({ getters: true }))
+  );
 };
 
 export const createPlace = async (
@@ -102,7 +100,7 @@ export const createPlace = async (
   } catch (error) {
     return next(
       new HttpError(
-        "Creating place failed, check associated User ID or try again later.",
+        "Creating place failed, check your address and other inputs or try again later.",
         500
       )
     );

@@ -23,7 +23,10 @@ const UserItem: React.FC<Props> = ({ user }) => {
               {user.name}
             </h2>
             <h3 className="m-0 font-semibold group-hover:text-light">
-              {user.places} {user.places === 1 ? "Places" : "Places"}
+              <>
+                {user.places.length}{" "}
+                {user.places.length === 1 ? "Places" : "Places"}
+              </>
             </h3>
           </div>
         </Link>
