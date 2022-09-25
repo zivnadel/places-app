@@ -3,15 +3,14 @@ export interface latLng {
   lat: number;
   lng: number;
 }
-
-export interface IPlace {
+export interface IPlace extends mongoose.Document {
   id?: string;
   title: string;
   description: string;
   address: string;
   location: latLng;
   imageUrl: string;
-  creator: string;
+  creator: mongoose.Types.ObjectId;
 }
 
 const placeSchema = new mongoose.Schema<IPlace>({
@@ -23,7 +22,11 @@ const placeSchema = new mongoose.Schema<IPlace>({
     lng: { type: Number, required: true },
   },
   imageUrl: { type: String, required: true },
-  creator: { type: String, required: true },
+  creator: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: "User",
+  },
 });
 
 export default mongoose.model<IPlace>("Place", placeSchema);

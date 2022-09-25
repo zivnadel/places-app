@@ -1,28 +1,31 @@
 import { NextFunction, Request, Response } from "express";
 import { validationResult } from "express-validator";
-import { v4 as uuidv4 } from "uuid";
 
 import HttpError from "../utils/HttpError";
+import User from "../models/user.model";
 
-const DUMMY_USERS: any = [
-  {
-    id: "u1",
-    name: "zivziv",
-    image:
-      "https://images.unsplash.com/photo-1662496167579-675de58d766a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
-    places: 3,
-  },
-];
-
-export const getAllUsers = (
+export const getAllUsers = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  res.json({ users: DUMMY_USERS });
+  let users;
+  try {
+    users = await User.find({}, "-password");
+  } catch (error) {
+    return next(
+      new HttpError("Fetching users failed, please try again later.", 500)
+    );
+  }
+
+  res.json({ users: users.map((user) => user.toObject({ getters: true })) });
 };
 
-export const signup = (req: Request, res: Response, next: NextFunction) => {
+export const signup = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -33,32 +36,59 @@ export const signup = (req: Request, res: Response, next: NextFunction) => {
 
   const { name, email, password } = req.body;
 
-  const hasUser = DUMMY_USERS.find((u: any) => u.email === email);
+  let existingUser;
+  try {
+    existingUser = await User.findOne({ email });
+  } catch (error) {
+    return next(
+      new HttpError("Signing up failed, please try again later.", 500)
+    );
+  }
 
-  if (hasUser) {
+  if (existingUser) {
     return next(
       new HttpError("Could not create user, email already exists.", 422)
     );
   }
 
-  const createdUser = {
-    id: uuidv4(),
+  const createdUser = new User({
     name,
     email,
+    image:
+      "https://images.unsplash.com/photo-1615996330003-8b8b0b0b5b0a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
     password,
-  };
+    places: [],
+  });
 
-  DUMMY_USERS.push(createdUser);
+  try {
+    await createdUser.save();
+  } catch (error) {
+    return next(
+      new HttpError("Signing up failed, please try again later.", 500)
+    );
+  }
 
-  res
-    .status(201)
-    .json({ message: "Successfully created a new user!", createdUser });
+  res.status(201).json({
+    message: "Successfully created a new user!",
+    createdUser: createdUser.toObject({ getters: true }),
+  });
 };
 
-export const login = (req: Request, res: Response, next: NextFunction) => {
+export const login = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const { email, password } = req.body;
 
-  const indenitifiedUser = DUMMY_USERS.find((u: any) => u.email === email);
+  let indenitifiedUser;
+  try {
+    indenitifiedUser = await User.findOne({ email });
+  } catch (error) {
+    return next(
+      new HttpError("Logging in failed, please try again later.", 500)
+    );
+  }
 
   if (!indenitifiedUser || indenitifiedUser.password !== password) {
     return next(
