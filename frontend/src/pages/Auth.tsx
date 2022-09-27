@@ -15,6 +15,7 @@ import LoadingSpinner from "../components/ui/LoadingSpinner";
 import ErrorModal from "../components/ui/ErrorModal";
 import useAxios from "../hooks/useAxios";
 import User from "../models/UserModel";
+import ImageUpload from "../components/ui/formElements/ImageUpload";
 
 interface IFormState {
   inputs: {
@@ -28,6 +29,10 @@ interface IFormState {
     };
     name?: {
       value: string;
+      isValid: boolean;
+    };
+    image?: {
+      value: File | null;
       isValid: boolean;
     };
   };
@@ -100,6 +105,7 @@ const Auth: React.FC = () => {
         {
           ...formState.inputs,
           name: undefined,
+          image: undefined,
         },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
@@ -109,6 +115,10 @@ const Auth: React.FC = () => {
           ...formState.inputs,
           name: {
             value: "",
+            isValid: false,
+          },
+          image: {
+            value: null,
             isValid: false,
           },
         },
@@ -128,15 +138,18 @@ const Auth: React.FC = () => {
         </h2>
         <Sapartor />
         {!isLoginMode && (
-          <Input
-            element="input"
-            id="name"
-            type="text"
-            label="Your Name"
-            validators={[VALIDATOR_REQUIRE()]}
-            errorText="Please enter a valid name!"
-            onInput={inputHandler}
-          />
+          <>
+            <ImageUpload onInput={inputHandler} id="image" centered />
+            <Input
+              element="input"
+              id="name"
+              type="text"
+              label="Your Name"
+              validators={[VALIDATOR_REQUIRE()]}
+              errorText="Please enter a valid name!"
+              onInput={inputHandler}
+            />
+          </>
         )}
         <Input
           className="w-full"

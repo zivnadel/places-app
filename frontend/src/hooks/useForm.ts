@@ -10,7 +10,7 @@ type FormAction =
       type: "INPUT_CHANGE";
       inputId: string;
       isValid: boolean;
-      value: string;
+      value: any;
     }
   | {
       type: "SET_DATA";
@@ -30,6 +30,7 @@ const formReducer = (state: FormState, action: FormAction) => {
           formIsValid = formIsValid && state.inputs[inputId].isValid;
         }
       }
+      console.log(formIsValid);
       return {
         ...state,
         inputs: {
@@ -53,7 +54,7 @@ const useForm = <T extends FormState>(initialFormState: T) => {
   const [formState, dispatch] = React.useReducer(formReducer, initialFormState);
 
   const inputHandler = React.useCallback(
-    (id: string, value: string, isValid: boolean) => {
+    (id: string, value: any, isValid: boolean) => {
       dispatch({ type: "INPUT_CHANGE", value, isValid, inputId: id });
     },
     []
