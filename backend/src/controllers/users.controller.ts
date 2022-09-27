@@ -36,8 +36,6 @@ export const signup = async (
 
   const { name, email, password } = req.body;
 
-  console.log(req.file.path);
-
   let existingUser;
   try {
     existingUser = await User.findOne({ email });
