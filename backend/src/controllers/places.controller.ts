@@ -1,3 +1,5 @@
+import fs from "fs";
+
 import { NextFunction, Request, Response } from "express";
 import { validationResult } from "express-validator";
 import getCoordsByAddress from "../utils/location";
@@ -87,7 +89,7 @@ export const createPlace = async (
     createdPlace = new Place({
       ...place,
       location,
-      imageUrl: "https://picsum.photos/200",
+      imageUrl: req.file.path,
     });
 
     const session = await mongoose.startSession();
@@ -159,6 +161,9 @@ export const deletePlace = async (
         new HttpError("Could not find a place for the provided id.", 404)
       );
     }
+
+    const imagePath = place.imageUrl;
+
     const session = await mongoose.startSession();
     session.startTransaction();
 
@@ -171,6 +176,10 @@ export const deletePlace = async (
     await creator.save({ session });
 
     await session.commitTransaction();
+
+    fs.unlink(imagePath, (err) => {
+      console.error(err);
+    });
   } catch (error) {
     return next(
       new HttpError("Something went wrong, could not delete place.", 500)

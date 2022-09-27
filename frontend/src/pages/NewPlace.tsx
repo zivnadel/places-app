@@ -10,6 +10,7 @@ import AuthContext from "../store/AuthContext";
 import ErrorModal from "../components/ui/ErrorModal";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import { useNavigate } from "react-router-dom";
+import ImageUpload from "../components/ui/formElements/ImageUpload";
 
 const NewPlace: React.FC = () => {
   const initialFormState = {
@@ -26,6 +27,10 @@ const NewPlace: React.FC = () => {
         value: "",
         isValid: false,
       },
+      image: {
+        value: null,
+        isValid: false,
+      },
     },
     isValid: false,
   };
@@ -40,12 +45,17 @@ const NewPlace: React.FC = () => {
 
   const placeSubmitHandler = (e: React.FormEvent) => {
     e.preventDefault();
-    sendRequest(`${process.env.REACT_APP_BACKEND_URL}/api/places`, "POST", {
-      title: formState.inputs.title.value,
-      description: formState.inputs.description.value,
-      address: formState.inputs.address.value,
-      creator: authContext?.uid,
-    }).then(() => {
+    const formData = new FormData();
+    formData.append("title", formState.inputs.title.value);
+    formData.append("description", formState.inputs.description.value);
+    formData.append("address", formState.inputs.address.value);
+    formData.append("image", formState.inputs.image.value!);
+    formData.append("creator", authContext!.uid);
+    sendRequest(
+      `${process.env.REACT_APP_BACKEND_URL}/api/places`,
+      "POST",
+      formData
+    ).then(() => {
       navigate("/");
     });
   };
@@ -55,6 +65,12 @@ const NewPlace: React.FC = () => {
       {error && <ErrorModal error={error} onClear={clearError} />}
       {isLoading && <LoadingSpinner asOverlay />}
       <FormWrapper onSubmit={placeSubmitHandler}>
+        <ImageUpload
+          id="image"
+          onInput={inputHandler}
+          errorText="Please provide an image"
+          centered
+        />
         <Input
           element="input"
           id="title"

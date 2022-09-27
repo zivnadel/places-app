@@ -83,14 +83,15 @@ const Auth: React.FC = () => {
           }
         );
       } else {
+        const formData = new FormData();
+        formData.append("email", formState.inputs.email.value);
+        formData.append("password", formState.inputs.password.value);
+        formData.append("name", formState.inputs.name!.value);
+        formData.append("image", formState.inputs.image!.value!);
         response = await sendRequest<IResponse>(
           `${process.env.REACT_APP_BACKEND_URL}/api/users/signup`,
           "POST",
-          {
-            name: formState.inputs.name!.value,
-            email: formState.inputs.email.value,
-            password: formState.inputs.password.value,
-          }
+          formData
         );
       }
       authContext?.login(response.user.id);
@@ -139,7 +140,12 @@ const Auth: React.FC = () => {
         <Sapartor />
         {!isLoginMode && (
           <>
-            <ImageUpload onInput={inputHandler} id="image" centered />
+            <ImageUpload
+              onInput={inputHandler}
+              id="image"
+              errorText="Please provide an image"
+              centered
+            />
             <Input
               element="input"
               id="name"

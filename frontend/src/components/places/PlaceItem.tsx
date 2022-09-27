@@ -87,7 +87,7 @@ const PlaceItem: React.FC<Props> = ({ place, id, onDelete }) => {
           <div className="w-full h-[12.5rem] mr-6 md:h-80">
             <img
               className="w-full h-full object-cover"
-              src={place.imageUrl}
+              src={`${process.env.REACT_APP_BACKEND_URL}/${place.imageUrl}`}
               alt={place.title}
             />
           </div>

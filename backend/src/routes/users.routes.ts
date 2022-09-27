@@ -1,5 +1,6 @@
 import express from "express";
 import { check } from "express-validator";
+import fileUpload from "../middleware/file-upload";
 
 import { getAllUsers, signup, login } from "../controllers/users.controller";
 
@@ -9,6 +10,7 @@ router.get("/", getAllUsers);
 
 router.post(
   "/signup",
+  fileUpload.single("image"),
   [
     check("name").notEmpty(),
     check("email").normalizeEmail().isEmail(),

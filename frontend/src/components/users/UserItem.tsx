@@ -16,7 +16,10 @@ const UserItem: React.FC<Props> = ({ user }) => {
           className="group flex items-center w-full h-full p-4 text-white bg-dark hover:bg-primary active:bg-primary transition-all duration-300"
         >
           <div className="w-16 h-16 mr-4">
-            <Avatar image={user.image} alt={user.name} />
+            <Avatar
+              image={`${process.env.REACT_APP_BACKEND_URL}/${user.image}`}
+              alt={user.name}
+            />
           </div>
           <div>
             <h2 className="text-3xl mb-2 text-secondary group-hover:text-light transition-all duration-300">
