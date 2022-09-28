@@ -68,6 +68,9 @@ const UpdatePlace: React.FC = () => {
       {
         title: formState.inputs.title.value,
         description: formState.inputs.description.value,
+      },
+      {
+        Authorization: `Bearer ${authContext!.token}`,
       }
     ).then(() => {
       navigate(`/${authContext?.uid}/places`);

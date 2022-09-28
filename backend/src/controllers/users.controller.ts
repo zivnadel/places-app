@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { validationResult } from "express-validator";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 import HttpError from "../utils/HttpError";
 import User from "../models/user.model";
@@ -51,16 +53,30 @@ export const signup = async (
     );
   }
 
+  let hashedPassword;
+
+  try {
+    hashedPassword = await bcrypt.hash(password, 12);
+  } catch (error) {
+    return next(new HttpError("Could not create user, please try again.", 500));
+  }
+
   const createdUser = new User({
     name,
     email,
     image: req.file.path,
-    password,
+    password: hashedPassword,
     places: [],
   });
 
+  let token;
   try {
     await createdUser.save();
+    token = jwt.sign(
+      { userId: createdUser.id, email: createdUser.email },
+      process.env.JWT_KEY!,
+      { expiresIn: "1h" }
+    );
   } catch (error) {
     return next(
       new HttpError("Signing up failed, please try again later.", 500)
@@ -69,7 +85,9 @@ export const signup = async (
 
   res.status(201).json({
     message: "Successfully created a new user!",
-    user: createdUser.toObject({ getters: true }),
+    uid: createdUser.id,
+    email: createdUser.email,
+    token,
   });
 };
 
@@ -89,17 +107,50 @@ export const login = async (
     );
   }
 
-  if (!indenitifiedUser || indenitifiedUser.password !== password) {
+  if (!indenitifiedUser) {
     return next(
       new HttpError(
         "Could not identify user, credentials seem to be wrong.",
-        401
+        403
       )
+    );
+  }
+
+  let isValidPassword = false;
+  try {
+    isValidPassword = await bcrypt.compare(password, indenitifiedUser.password);
+  } catch (error) {
+    return next(
+      new HttpError("Could not log you in, please check your credentials.", 500)
+    );
+  }
+
+  if (!isValidPassword) {
+    return next(
+      new HttpError(
+        "Could not identify user, credentials seem to be wrong.",
+        403
+      )
+    );
+  }
+
+  let token;
+  try {
+    token = jwt.sign(
+      { userId: indenitifiedUser.id, email: indenitifiedUser.email },
+      process.env.JWT_KEY!,
+      { expiresIn: "1h" }
+    );
+  } catch (error) {
+    return next(
+      new HttpError("Logging in failed, please try again later.", 500)
     );
   }
 
   res.json({
     message: "Logged In!",
-    user: indenitifiedUser.toObject({ getters: true }),
+    uid: indenitifiedUser.id,
+    email: indenitifiedUser.email,
+    token,
   });
 };

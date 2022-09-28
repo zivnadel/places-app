@@ -54,7 +54,10 @@ const NewPlace: React.FC = () => {
     sendRequest(
       `${process.env.REACT_APP_BACKEND_URL}/api/places`,
       "POST",
-      formData
+      formData,
+      {
+        Authorization: `Bearer ${authContext!.token}`,
+      }
     ).then(() => {
       navigate("/");
     });

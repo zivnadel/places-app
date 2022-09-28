@@ -14,7 +14,6 @@ import {
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import ErrorModal from "../components/ui/ErrorModal";
 import useAxios from "../hooks/useAxios";
-import User from "../models/UserModel";
 import ImageUpload from "../components/ui/formElements/ImageUpload";
 
 interface IFormState {
@@ -67,8 +66,10 @@ const Auth: React.FC = () => {
 
     try {
       interface IResponse {
-        user: User;
         message: string;
+        uid: string;
+        email: string;
+        token: string;
       }
 
       let response;
@@ -94,7 +95,7 @@ const Auth: React.FC = () => {
           formData
         );
       }
-      authContext?.login(response.user.id);
+      authContext?.login(response.uid, response.token);
     } catch (error) {}
   };
 

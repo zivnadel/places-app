@@ -1,5 +1,5 @@
 import React from "react";
-import axios from "axios";
+import axios, { AxiosRequestHeaders } from "axios";
 
 const useAxios = () => {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -8,7 +8,12 @@ const useAxios = () => {
   const activeRequest = React.useRef<AbortController[]>([]);
 
   const sendRequest = React.useCallback(
-    async <DataType>(url: string, method: string = "GET", data?: any) => {
+    async <DataType>(
+      url: string,
+      method: string = "GET",
+      data?: any,
+      headers?: AxiosRequestHeaders
+    ) => {
       setIsLoading(true);
       const abortController = new AbortController();
       activeRequest.current.push(abortController);
@@ -18,6 +23,7 @@ const useAxios = () => {
           url,
           method,
           data,
+          headers,
           signal: abortController.signal,
         });
 

@@ -10,25 +10,27 @@ import Users from "./pages/Users";
 import AuthContext, { AuthContextModel } from "./store/AuthContext";
 
 const App: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [token, setToken] = React.useState("");
   const [uid, setUid] = React.useState("");
 
   const authContext: AuthContextModel = {
-    isLoggedIn,
+    isLoggedIn: !!token,
+    token,
     uid,
-    login: React.useCallback((uid: string) => {
-      setIsLoggedIn(true);
+    login: React.useCallback((uid: string, token: string) => {
+      setToken(token);
+      localStorage.setItem("userData", JSON.stringify({ uid, token }));
       setUid(uid);
     }, []),
     logout: React.useCallback(() => {
-      setIsLoggedIn(false);
+      setToken("");
       setUid("");
     }, []),
   };
 
   let routes;
 
-  if (isLoggedIn) {
+  if (token) {
     routes = (
       <Routes>
         <Route path="/" element={<Users />} />

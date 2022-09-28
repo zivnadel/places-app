@@ -1,6 +1,6 @@
 import express from "express";
 import { check } from "express-validator";
-import fileUpload from "../middleware/file-upload";
+import fileUpload from "../middlewares/file-upload";
 
 import {
   getPlaceById,
@@ -9,12 +9,15 @@ import {
   updatePlace,
   deletePlace,
 } from "../controllers/places.controller";
+import jwtAuth from "../middlewares/jwt-auth";
 
 const router = express.Router();
 
 router.get("/:pid", getPlaceById);
 
 router.get("/user/:uid", getPlacesByCreatorId);
+
+router.use(jwtAuth);
 
 router.post(
   "/",

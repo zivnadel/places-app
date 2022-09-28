@@ -1,6 +1,6 @@
 import express from "express";
 import { check } from "express-validator";
-import fileUpload from "../middleware/file-upload";
+import fileUpload from "../middlewares/file-upload";
 
 import { getAllUsers, signup, login } from "../controllers/users.controller";
 

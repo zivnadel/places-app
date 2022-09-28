@@ -39,7 +39,11 @@ const PlaceItem: React.FC<Props> = ({ place, id, onDelete }) => {
     setShowDeleteModal(false);
     sendRequest(
       `${process.env.REACT_APP_BACKEND_URL}/api/places/${id}`,
-      "DELETE"
+      "DELETE",
+      null,
+      {
+        Authorization: `Bearer ${authContext!.token}`,
+      }
     ).then(() => {
       onDelete(id);
     });

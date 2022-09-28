@@ -112,7 +112,7 @@ export const createPlace = async (
 };
 
 export const updatePlace = async (
-  req: Request,
+  req: Request & { userData: { uid: string } },
   res: Response,
   next: NextFunction
 ) => {
@@ -130,6 +130,13 @@ export const updatePlace = async (
   let place;
   try {
     place = await Place.findById(pid);
+
+    if (place.creator.toString() !== req.userData.uid) {
+      return next(
+        new HttpError("You are not allowed to edit this place.", 401)
+      );
+    }
+
     place.title = title;
     place.description = description;
     await place.save();
@@ -146,7 +153,7 @@ export const updatePlace = async (
 };
 
 export const deletePlace = async (
-  req: Request,
+  req: Request & { userData: { uid: string } },
   res: Response,
   next: NextFunction
 ) => {
@@ -162,14 +169,20 @@ export const deletePlace = async (
       );
     }
 
+    const creator = place.creator as unknown as IUser;
+
+    if (creator.id !== req.userData.uid) {
+      return next(
+        new HttpError("You are not allowed to delete this place.", 401)
+      );
+    }
+
     const imagePath = place.imageUrl;
 
     const session = await mongoose.startSession();
     session.startTransaction();
 
     await place.remove({ session });
-
-    const creator = place.creator as unknown as IUser;
 
     creator.places.pull(place);
 
