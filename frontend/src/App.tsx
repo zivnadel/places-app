@@ -2,31 +2,16 @@ import React from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import MainNav from "./components/nav/MainNav";
+import useAuth from "./hooks/useAuth";
 import Auth from "./pages/Auth";
 import NewPlace from "./pages/NewPlace";
 import UpdatePlace from "./pages/UpdatePlace";
 import UserPlaces from "./pages/UserPlaces";
 import Users from "./pages/Users";
-import AuthContext, { AuthContextModel } from "./store/AuthContext";
+import AuthContext from "./store/AuthContext";
 
 const App: React.FC = () => {
-  const [token, setToken] = React.useState("");
-  const [uid, setUid] = React.useState("");
-
-  const authContext: AuthContextModel = {
-    isLoggedIn: !!token,
-    token,
-    uid,
-    login: React.useCallback((uid: string, token: string) => {
-      setToken(token);
-      localStorage.setItem("userData", JSON.stringify({ uid, token }));
-      setUid(uid);
-    }, []),
-    logout: React.useCallback(() => {
-      setToken("");
-      setUid("");
-    }, []),
-  };
+  const { token, authContext } = useAuth();
 
   let routes;
 

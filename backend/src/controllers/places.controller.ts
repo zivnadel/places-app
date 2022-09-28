@@ -63,7 +63,7 @@ export const getPlacesByCreatorId = async (
 };
 
 export const createPlace = async (
-  req: Request,
+  req: Request & { userData: { uid: string } },
   res: Response,
   next: NextFunction
 ) => {
@@ -75,12 +75,12 @@ export const createPlace = async (
     );
   }
 
-  const place: Omit<IPlace, "location"> = req.body;
+  const place: Omit<Omit<IPlace, "location">, "creator"> = req.body;
 
   let createdPlace;
   try {
     const location = await getCoordsByAddress(place.address);
-    const user = await User.findById(place.creator);
+    const user = await User.findById(req.userData.uid);
 
     if (!user) {
       return next(new HttpError("Could not find user for provided id.", 404));
@@ -89,6 +89,7 @@ export const createPlace = async (
     createdPlace = new Place({
       ...place,
       location,
+      creator: req.userData.uid,
       imageUrl: req.file.path,
     });
 
