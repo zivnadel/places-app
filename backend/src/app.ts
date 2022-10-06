@@ -10,6 +10,8 @@ import usersRoutes from "./routes/users.routes";
 
 const app = express();
 
+const PORT = process.env.PORT || 3030;
+
 app.use(express.json());
 
 app.use(
@@ -60,8 +62,8 @@ app.use((error: HttpError, req: Request, res: Response, next: NextFunction) => {
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
-    app.listen(5000, () => {
-      console.log("Server is up and running on port 5000");
+    app.listen(PORT, () => {
+      console.log(`Server is up and running on port ${PORT}`);
     });
   })
   .catch((error) => {
