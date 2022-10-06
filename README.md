@@ -50,7 +50,7 @@ JWT_KEY - a secret string that is used to sign the JSON Web Token.
 
 ## Technologies Used
 ### Frontend
-TypeScript, React.js, react-router-dom, react-transition-group, create-react-app, axios, TailwindCSS, Google Maps API, Netlify for deployment.
+TypeScript, React.js, react-router-dom (v6), react-transition-group, create-react-app, axios, TailwindCSS, Google Maps API, Netlify for deployment.
 ### Backend
 TypeScript, Node.js, Express.js, MongoDB, mongoose, multer, axios, JWT, express-validator, mongoose-unique-validator, ts-node-dev, Google Geocode API, Render for deployment.
 
