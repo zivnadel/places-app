@@ -73,7 +73,7 @@ export const signup = async (
   try {
     await createdUser.save();
     token = jwt.sign(
-      { userId: createdUser.id, email: createdUser.email },
+      { uid: createdUser.id, email: createdUser.email },
       process.env.JWT_KEY!,
       { expiresIn: "1h" }
     );
@@ -137,7 +137,7 @@ export const login = async (
   let token;
   try {
     token = jwt.sign(
-      { userId: indenitifiedUser.id, email: indenitifiedUser.email },
+      { uid: indenitifiedUser.id, email: indenitifiedUser.email },
       process.env.JWT_KEY!,
       { expiresIn: "1h" }
     );

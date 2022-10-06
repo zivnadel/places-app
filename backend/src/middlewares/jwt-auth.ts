@@ -11,7 +11,7 @@ const jwtAuth = async (req: Request, res: Response, next: NextFunction) => {
       uid: string;
       email: string;
     };
-    (req as any).uid = { userId: decodedToken.uid };
+    (req as any).userData = { uid: decodedToken.uid };
     next();
   } catch (error) {
     return next(new HttpError("Authentication failed!", 403));

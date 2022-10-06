@@ -75,11 +75,12 @@ export const createPlace = async (
     );
   }
 
-  const place: Omit<Omit<IPlace, "location">, "creator"> = req.body;
+  const place: Omit<IPlace, "location" | "creator"> = req.body;
 
   let createdPlace;
   try {
     const location = await getCoordsByAddress(place.address);
+
     const user = await User.findById(req.userData.uid);
 
     if (!user) {
