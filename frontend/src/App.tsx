@@ -2,13 +2,15 @@ import React from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import MainNav from "./components/nav/MainNav";
+import LoadingSpinner from "./components/ui/LoadingSpinner";
 import useAuth from "./hooks/useAuth";
-import Auth from "./pages/Auth";
-import NewPlace from "./pages/NewPlace";
-import UpdatePlace from "./pages/UpdatePlace";
-import UserPlaces from "./pages/UserPlaces";
 import Users from "./pages/Users";
 import AuthContext from "./store/AuthContext";
+
+const NewPlace = React.lazy(() => import("./pages/NewPlace"));
+const UpdatePlace = React.lazy(() => import("./pages/UpdatePlace"));
+const UserPlaces = React.lazy(() => import("./pages/UserPlaces"));
+const Auth = React.lazy(() => import("./pages/Auth"));
 
 const App: React.FC = () => {
   const { token, authContext } = useAuth();
@@ -40,7 +42,11 @@ const App: React.FC = () => {
     <BrowserRouter>
       <AuthContext.Provider value={authContext}>
         <MainNav />
-        <main className="mt-20">{routes}</main>
+        <main className="mt-20">
+          <React.Suspense fallback={<LoadingSpinner asOverlay />}>
+            {routes}
+          </React.Suspense>
+        </main>
       </AuthContext.Provider>
     </BrowserRouter>
   );
